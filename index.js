@@ -11,9 +11,12 @@ const server = http.createServer((req, res) => {
   const path = parsedUrl.pathname
   const trimmedPath = path.replace(/^\/+|\/+$/, '')
 
+  // get HTTP method
+  const method = req.method.toUpperCase()
+
   // send response
   res.end('Hello World\n')
-  console.log(`Request received on path ${trimmedPath}`)
+  console.log(`${method} request received on path ${trimmedPath}`)
 })
 
 // start the server and have it listening on prt 3000

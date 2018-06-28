@@ -11,12 +11,15 @@ const server = http.createServer((req, res) => {
   const path = parsedUrl.pathname
   const trimmedPath = path.replace(/^\/+|\/+$/, '')
 
+  // get query string as an object
+  const queryStringObject = parsedUrl.query
+
   // get HTTP method
   const method = req.method.toUpperCase()
 
   // send response
   res.end('Hello World\n')
-  console.log(`${method} request received on path ${trimmedPath}`)
+  console.log(`${method} request received on path ${trimmedPath} with the following query strings `, queryStringObject)
 })
 
 // start the server and have it listening on prt 3000

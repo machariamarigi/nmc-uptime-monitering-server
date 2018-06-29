@@ -1,5 +1,6 @@
 const http = require('http')
 const url = require('url')
+const StringDecoder = require('string_decoder').StringDecoder
 
 // server responding to requests
 const server = http.createServer((req, res) => {
@@ -20,10 +21,21 @@ const server = http.createServer((req, res) => {
   // get the headers as an object
   const headers = req.headers
 
-  // send response
-  res.end('Hello World\n')
-  console.log('Headers: ', headers)
-  console.log(`${method} request received on path ${trimmedPath} with the following query strings `, queryStringObject)
+  // get the payload if there's any
+  const decoder = new StringDecoder('utf-8')
+  let buffer = '';
+  req.on('data', (data) => buffer += decoder.write(data))
+
+  req.on('end', () => {
+    buffer += decoder.end()
+    
+    // send response
+    res.end('Hello World\n')
+    console.log('Headers: ', headers)
+    console.log(`${method} request received on path ${trimmedPath} with the following query strings `, queryStringObject)
+    console.log('Payload: ', buffer)
+  })
+
 })
 
 // start the server and have it listening on prt 3000

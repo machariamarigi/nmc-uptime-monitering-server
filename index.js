@@ -5,7 +5,7 @@ const StringDecoder = require('string_decoder').StringDecoder
 // server responding to requests
 const server = http.createServer((req, res) => {
 
-  // Get the url and parse it
+  // get the url and parse it
   const parsedUrl = url.parse(req.url, true)
 
   // get trimmed path
@@ -28,15 +28,50 @@ const server = http.createServer((req, res) => {
 
   req.on('end', () => {
     buffer += decoder.end()
-    
-    // send response
-    res.end('Hello World\n')
-    console.log('Headers: ', headers)
-    console.log(`${method} request received on path ${trimmedPath} with the following query strings `, queryStringObject)
-    console.log('Payload: ', buffer)
+
+    // choose hanlder this request should go to
+    const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound
+
+    // constract data object to send to handler
+    const data = {
+      trimmedPath,
+      queryStringObject,
+      method,
+      headers,
+      'payload': buffer
+    }
+
+    chosenHandler(data, (statusCode, payload) => {
+      statusCode = typeof(statusCode) === 'number' ? statusCode : 200
+
+      // payload object from handler or empty object converted into a string
+      payload = typeof(payload) == 'object' ? payload : {}
+      payloadString = JSON.stringify(payload)
+
+      // returning the response
+      res.writeHead(statusCode)
+      res.end(payloadString)
+      console.log(`Return with response ${statusCode} ${payloadString}`)
+    })
   })
 
 })
 
 // start the server and have it listening on prt 3000
 server.listen(3000, () => console.log('The server is listening on port 3000'))
+
+// define handlers
+const handlers = {}
+
+handlers.sample = (data, callback) => {
+  callback(406, {name: 'sample handler'})
+}
+
+handlers.notFound = (data, callback) => {
+  callback(404)
+}
+
+// define a request router
+const router = {
+  'sample': handlers.sample
+}

@@ -49,6 +49,7 @@ const server = http.createServer((req, res) => {
       payloadString = JSON.stringify(payload)
 
       // returning the response
+      res.setHeader('Content-Type', 'application/json')
       res.writeHead(statusCode)
       res.end(payloadString)
       console.log(`Return with response ${statusCode} ${payloadString}`)
@@ -68,7 +69,7 @@ handlers.sample = (data, callback) => {
 }
 
 handlers.notFound = (data, callback) => {
-  callback(404)
+  callback(404, {error: 'Not found'})
 }
 
 // define a request router

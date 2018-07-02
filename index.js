@@ -1,11 +1,28 @@
 const http = require('http')
+const https = require('https')
 const url = require('url')
+const fs = require('fs')
 const StringDecoder = require('string_decoder').StringDecoder
 const config = require('./config')
 
-// server responding to requests
-const server = http.createServer((req, res) => {
 
+// define handlers
+const handlers = {}
+
+handlers.ping = (data, callback) => {
+  callback(200)
+}
+
+handlers.notFound = (data, callback) => {
+  callback(404, {error: 'Not found'})
+}
+
+// define a request router
+const router = {
+  ping : handlers.ping
+}
+
+const unifiedServer = (req, res) => {
   // get the url and parse it
   const parsedUrl = url.parse(req.url, true)
 
@@ -56,24 +73,22 @@ const server = http.createServer((req, res) => {
       console.log(`Return with response ${statusCode} ${payloadString}`)
     })
   })
+}
 
+const httpServer = http.createServer((req, res) => {
+  unifiedServer(req, res)
 })
 
-// start the server
-server.listen(config.port, () => console.log(`The server is listening on port ${config.port} in ${config.envName} mode`))
-
-// define handlers
-const handlers = {}
-
-handlers.sample = (data, callback) => {
-  callback(406, {name: 'sample handler'})
+const httpsServerOptions = {
+  key: fs.readFileSync('./https/key.pem'),
+  cert: fs.readFileSync('./https/cert.pem')
 }
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+  unifiedServer(req, res)
+})
 
-handlers.notFound = (data, callback) => {
-  callback(404, {error: 'Not found'})
-}
+// start the http server
+httpServer.listen(config.httpPort, () => console.log(`The server is listening on port ${config.httpPort} in ${config.envName} mode`))
 
-// define a request router
-const router = {
-  'sample': handlers.sample
-}
+// start the https server
+httpsServer.listen(config.httpsPort, () => console.log(`Ther server is listening on port ${config.httpsPort} in ${config.envName} mode`))

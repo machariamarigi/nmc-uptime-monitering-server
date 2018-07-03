@@ -4,8 +4,6 @@ const url = require('url')
 const fs = require('fs')
 const StringDecoder = require('string_decoder').StringDecoder
 const config = require('./config')
-
-
 // define handlers
 const handlers = {}
 
@@ -56,7 +54,7 @@ const unifiedServer = (req, res) => {
       queryStringObject,
       method,
       headers,
-      'payload': buffer
+      payload: buffer
     }
 
     chosenHandler(data, (statusCode, payload) => {

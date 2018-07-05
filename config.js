@@ -3,13 +3,15 @@ const environments = {}
 environments.staging = {
   httpPort: 3000,
   httpsPort: 3001,
-  envName: 'staging'
+  envName: 'staging',
+  hashingSecret: 'staghash'
 }
 
 environments.production = {
   httpPort: 3000,
   httpsPort: 3001,
-  envName: 'production'
+  envName: 'production',
+  hashingSecret: 'prodhash'
 }
 
 const currentEnv = typeof(process.env.NODE_ENV) === 'string' ? process.env.NODE_ENV.toLowerCase() : ''

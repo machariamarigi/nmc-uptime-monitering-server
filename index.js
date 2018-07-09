@@ -7,11 +7,6 @@ const config = require('./config')
 const handlers = require('./lib/handlers')
 const helpers = require('./lib/helpers')
 
-// Todo - remomove this after testing
-helpers.twilioSendMessage('0723834044', 'Hello', err => {
-  console.log(`This was the error ${err}`)
-})
-
 // define a request router
 const router = {
   ping : handlers.ping,

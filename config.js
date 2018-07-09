@@ -5,7 +5,8 @@ environments.staging = {
   httpsPort: 3001,
   envName: 'staging',
   hashingSecret: 'staghash',
-  maxChecks: 5
+  maxChecks: 5,
+  twilio,
 }
 
 environments.production = {
@@ -13,7 +14,8 @@ environments.production = {
   httpsPort: 3001,
   envName: 'production',
   hashingSecret: 'prodhash',
-  maxChecks: 5
+  maxChecks: 5,
+  twilio,
 }
 
 const currentEnv = typeof(process.env.NODE_ENV) === 'string' ? process.env.NODE_ENV.toLowerCase() : ''
